@@ -7,7 +7,7 @@ import json
 # contains some utility functions for extracting information from model_config
 # and converting Triton input/output types to numpy types.
 import triton_python_backend_utils as pb_utils
-import onnx
+import onnx,torch
 import onnxruntime
 
 
@@ -32,9 +32,10 @@ class TritonPythonModel:
           * model_version: Model version
           * model_name: Model name
         """
-        self.model = onnx.load("modelgcn.onnx")
+        # self.model = onnx.load("modelgcn.onnx")
+        self.model = torch.jit.load("/opt/tritonserver/test_triton/python_backend/models/gcn_model/1/model.pt")
 
-        self.ort_session = onnxruntime.InferenceSession("modelgcn.onnx",providers=['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'])
+        # self.ort_session = onnxruntime.InferenceSession("modelgcn.onnx",providers=['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'])
 
 
 
@@ -88,14 +89,15 @@ class TritonPythonModel:
             # Get INPUT0
             in_0 = pb_utils.get_input_tensor_by_name(request, "INPUT0")
 
-            if in_0.requires_grad:
-                in_0.detach().cpu().numpy() 
-            else :
-                in_0.cpu().numpy()
+            out_0 = self.model(in_0)
+            # if in_0.requires_grad:
+            #     in_0.detach().cpu().numpy() 
+            # else :
+            # in_0.cpu().numpy()
 
         # compute ONNX Runtime output prediction
-            ort_inputs = {self.ort_session.get_inputs()[0].name: in_0}
-            out_0 = self.ort_session.run(None, ort_inputs)
+            # ort_inputs = {self.ort_session.get_inputs()[0].name: in_0}
+            # out_0 = self.ort_session.run(None, ort_inputs)
             # Get INPUT1
             # in_1 = pb_utils.get_input_tensor_by_name(request, "INPUT1")
 
