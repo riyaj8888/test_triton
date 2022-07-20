@@ -91,7 +91,7 @@ class TritonPythonModel:
 
 
             out_0 = self.model(torch.Tensor(in_0.as_numpy()))
-            out_0 = out_0.numpy()
+            out_0 = out_0.detach().numpy()
 
             # out_0 = self.model(in_0.as_numpy())
 
