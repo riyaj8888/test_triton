@@ -90,7 +90,7 @@ class TritonPythonModel:
             in_0 = pb_utils.get_input_tensor_by_name(request, "INPUT0")
 
 
-            out_0 = self.model(in_0)
+            out_0 = self.model(torch.Tensor(in_0))
 
             # out_0 = self.model(in_0.as_numpy())
 
